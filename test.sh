@@ -10,8 +10,9 @@ PORT=${4:-29000}   #the default gpu_id is 1
 NNODES=${NNODES:-1}
 NODE_RANK=${NODE_RANK:-0}
 MASTER_ADDR=${MASTER_ADDR:-"127.0.0.1"}
+ 
 
-source ~/anaconda3/bin/activate myenv
+source myenv/bin/activate
 
 
 
