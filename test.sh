@@ -11,7 +11,7 @@ NNODES=${NNODES:-1}
 NODE_RANK=${NODE_RANK:-0}
 MASTER_ADDR=${MASTER_ADDR:-"127.0.0.1"}
 
-source ~/anaconda3/bin/activate STEERER
+#source ~/anaconda3/bin/activate STEERER
 
 
 
