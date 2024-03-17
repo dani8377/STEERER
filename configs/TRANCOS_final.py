@@ -29,7 +29,7 @@ network = dict(
 
 dataset = dict(
     name='TRANCOS',
-    root='../ProcessedData/TRANCOS_v3/',
+    root='ProcessedData/TRANCOS_v3/',
     test_set='test.txt',
     train_set='train.txt',
     loc_gt = 'test_gt_loc.txt',
