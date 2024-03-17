@@ -26,7 +26,7 @@ network = dict(
 
 dataset = dict(
     name='FDST',
-    root='../ProcessedData/FDST/',
+    root='ProcessedData/FDST/',
     test_set='test.txt',
     train_set='train.txt',
     loc_gt = 'test_gt_loc.txt',

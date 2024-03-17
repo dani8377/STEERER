@@ -27,7 +27,7 @@ network = dict(
 
 dataset = dict(
     name='JHU',
-    root='../ProcessedData/JHU/',
+    root='ProcessedData/JHU/',
     test_set='test_val.txt',
     train_set='train.txt',
     loc_gt = 'test_gt_loc.txt',
