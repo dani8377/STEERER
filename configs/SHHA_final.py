@@ -14,7 +14,7 @@ network = dict(
     resolution_num = [0,1,2,3],
     loss_weight = [1., 1./2, 1./4, 1./8],
     sigma = [4],
-    gau_kernel_size = 11,
+    gau_kernel_size = 15,
     baseline_loss = False,
     pretrained_backbone="../PretrainedModels/hrnetv2_w48_imagenet_pretrained.pth",
 
