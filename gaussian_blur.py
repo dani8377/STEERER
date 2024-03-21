@@ -34,7 +34,6 @@ def open_image(image_path):
 # Instead of getting the paths from command line arguments, prompt the user for input
 image_dir = input("Enter the path to the directory with images: ")
 output_dir = input("Enter the path to the directory where blurred images will be saved: ")
-move_mat_files = input("Do you want to move .mat files too (yes or no): ")
 blur_amount = int(input("How much blur do you want (e.g. 5, 7, 9): "))
 
 # Make sure output directory exists
@@ -43,9 +42,6 @@ if not os.path.exists(output_dir):
 
 # Get all filenames in the directory
 filenames = os.listdir(image_dir)
-
-if move_mat_files == "yes":
-    copy_mat_files(image_dir, output_dir)
 
 # Loop through all filenames
 for filename in filenames:
