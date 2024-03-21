@@ -35,7 +35,7 @@ def open_image(image_path):
 image_dir = input("Enter the path to the directory with images: ")
 output_dir = input("Enter the path to the directory where blurred images will be saved: ")
 move_mat_files = input("Do you want to move .mat files too (yes or no): ")
-blur_amount = input("How much blur do you want (e.g. 5, 7, 9): ")
+blur_amount = int(input("How much blur do you want (e.g. 5, 7, 9): "))
 
 # Make sure output directory exists
 if not os.path.exists(output_dir):
