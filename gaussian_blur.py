@@ -35,6 +35,7 @@ def open_image(image_path):
 image_dir = input("Enter the path to the directory with images: ")
 output_dir = input("Enter the path to the directory where blurred images will be saved: ")
 move_mat_files = input("Do you want to move .mat files too (yes or no): ")
+blur_amount = input("How much blur do you want (e.g. 5, 7, 9): ")
 
 # Make sure output directory exists
 if not os.path.exists(output_dir):
@@ -58,7 +59,7 @@ for filename in filenames:
         # Check if image loading was successful (optional, handle potential errors)
         if img is not None:  # Skip processing if image fails to load
             # Apply Gaussian blur (adjust blur radius as needed)
-            blurred_img = cv2.GaussianBlur(img, (5, 5), 0)
+            blurred_img = cv2.GaussianBlur(img, (blur_amount, blur_amount), 0)
 
             # Create a new filename for the blurred image (optional)
             output_filename = f"{filename}"
