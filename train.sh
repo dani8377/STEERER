@@ -19,7 +19,7 @@ for ((i=0; i<${#GPUS_ID}; i++)); do
     fi
 done
 
-source myenv/bin/activate
+#source myenv/bin/activate
 
 echo "export CUDA_VISIBLE_DEVICES=$GPUS_ID"
 export CUDA_VISIBLE_DEVICES=${GPUS_ID:-"0"}
@@ -27,7 +27,7 @@ export CUDA_VISIBLE_DEVICES=${GPUS_ID:-"0"}
 
 # torchrun --nproc_per_node=${GPU_NUM} --master_port ${PORT} tools/train_cc.py --cfg ${CONFIG} 
 
-python -m torch.distributed.launch \
+python3 -m torch.distributed.launch \
     --node_rank=$NODE_RANK \
     --master_addr=$MASTER_ADDR \
     --nproc_per_node=$GPU_NUM \
