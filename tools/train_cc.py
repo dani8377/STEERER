@@ -254,6 +254,8 @@ def main():
         if distributed:
             train_sampler.set_epoch(epoch)
         for batch_idx, (data, target) in enumerate(trainloader):
+            print(batch_data)
+            data, target = batch_data[0], batch_data[1]
             data, target = data.to(device), target.to(device)
             optimizer.zero_grad()
             log_gpu_memory(f"Before Forward Pass - Epoch {epoch}, Batch {batch_idx}", logger)
