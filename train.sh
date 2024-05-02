@@ -1,11 +1,10 @@
-# !/usr/bin/env sh
+#!/usr/bin/env sh
 # ${GPUS:-4}
 # set -x
 
-
 CONFIG=$1
 GPUS_ID=${2:-0}    #the default gpu_id is 0 
-PORT=${3:-29000}   #the default gpu_id is 1
+PORT=${3:-29000}   #the default port is 29000
 NNODES=${NNODES:-1}
 NODE_RANK=${NODE_RANK:-0}
 
@@ -24,9 +23,10 @@ source ~/miniconda3/bin/activate STEERER
 echo "export CUDA_VISIBLE_DEVICES=$GPUS_ID"
 export CUDA_VISIBLE_DEVICES=${GPUS_ID:-"0"}
 
+# Clear GPU cache before starting the training
+python3 -c "import torch; torch.cuda.empty_cache()"
 
-# torchrun --nproc_per_node=${GPU_NUM} --master_port ${PORT} tools/train_cc.py --cfg ${CONFIG} 
-python3 torch.cuda.empty_cache()
+# Run the PyTorch distributed training
 python3 -m torch.distributed.launch \
     --node_rank=$NODE_RANK \
     --master_addr=$MASTER_ADDR \
