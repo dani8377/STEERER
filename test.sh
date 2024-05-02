@@ -12,7 +12,7 @@ NODE_RANK=${NODE_RANK:-0}
 MASTER_ADDR=${MASTER_ADDR:-"127.0.0.1"}
  
 
-source env/bin/activate
+source ~/miniconda3/bin/activate STEERER
 
 
 
