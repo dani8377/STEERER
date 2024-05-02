@@ -349,5 +349,42 @@ def main():
                     logger.info('Done')
 
 
+def train(config, current_epoch, total_epochs, num_iters, dataloader, optimizer, scheduler, model, writer_dict, device):
+    model.train()
+    for iteration, data in enumerate(dataloader, start=1):
+        images, targets = data[0].to(device), data[1].to(device)
+
+        optimizer.zero_grad()
+
+        # Logging before forward pass
+        print(f"Before forward pass: {torch.cuda.memory_allocated()/1024**3:.2f} GB")
+        
+        outputs = model(images)
+        
+        # Logging after forward pass
+        print(f"After forward pass: {torch.cuda.memory_allocated()/1024**3:.2f} GB")
+
+        loss = criterion(outputs, targets)
+        
+        # Logging after loss computation
+        print(f"After loss computation: {torch.cuda.memory_allocated()/1024**3:.2f} GB")
+
+        loss.backward()
+        
+        # Logging after backward pass
+        print(f"After backward pass: {torch.cuda.memory_allocated()/1024**3:.2f} GB")
+
+        optimizer.step()
+
+        # Logging after optimizer step
+        print(f"After optimizer step: {torch.cuda.memory_allocated()/1024**3:.2f} GB")
+        
+        if iteration % config.print_freq == 0:
+            print(f'Epoch [{current_epoch}/{total_epochs}] Iteration {iteration}/{num_iters} Loss: {loss.item()}')
+        
+        # Other logging or saving actions
+
+
+
 if __name__ == '__main__':
     main()

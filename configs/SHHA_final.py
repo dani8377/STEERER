@@ -30,7 +30,7 @@ network = dict(
 
 dataset = dict(
     name='SHHA',
-    root='ProcessedData/SHHA/',
+    root='../ProcessedData/SHHA/',
     test_set='test.txt',
     train_set='train.txt',
     loc_gt = 'test_gt_loc.txt',
