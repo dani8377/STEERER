@@ -349,7 +349,8 @@ def main():
                     logger.info('Done')
 
 
-def train(config, current_epoch, total_epochs, num_iters, dataloader, optimizer, scheduler, model, writer_dict, device):
+def train(config, current_epoch, total_epochs, dataloader, optimizer, model, device, logger, extra_params=None):
+    # Function body here
     model.train()
     for iteration, data in enumerate(dataloader, start=1):
         images, targets = data[0].to(device), data[1].to(device)
