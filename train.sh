@@ -26,7 +26,7 @@ export CUDA_VISIBLE_DEVICES=${GPUS_ID:-"0"}
 
 
 # torchrun --nproc_per_node=${GPU_NUM} --master_port ${PORT} tools/train_cc.py --cfg ${CONFIG} 
-
+python3 torch.cuda.empty_cache()
 python3 -m torch.distributed.launch \
     --node_rank=$NODE_RANK \
     --master_addr=$MASTER_ADDR \
