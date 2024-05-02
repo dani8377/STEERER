@@ -16,7 +16,7 @@ PY_ARGS=${@:5}
 PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
 
 
-source /mnt/petrelfs/hantao.dispatch/anaconda3/bin/activate STEERER
+source ~/miniconda3/bin/activate STEERER
 srun -p ${PARTITION} \
     --job-name=${JOB_NAME} \
     --gres=gpu:${GPUS_PER_NODE} \
