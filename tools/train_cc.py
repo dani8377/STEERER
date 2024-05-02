@@ -35,6 +35,14 @@ from lib.solver.build import build_optimizer_cls
 from lib.solver.lr_scheduler_cls import build_scheduler
 from fvcore.nn.flop_count import flop_count
 
+
+def log_gpu_memory(phase, logger):
+    allocated = torch.cuda.memory_allocated() / (1024 ** 3)
+    cached = torch.cuda.memory_reserved() / (1024 ** 3)
+    logger.info(f"{phase} - Allocated memory: {allocated:.2f} GB, Cached memory: {cached:.2f} GB")
+
+
+
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.integer):
@@ -93,10 +101,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-
     config = Config.fromfile(args.cfg)
-
-    # cudnn related and random seed setting
     random_seed_setting(config)
 
     if args.cfg_options is not None:
@@ -133,12 +138,9 @@ def main():
     # build model
 
     model = Baseline_Counter(config.network,config.dataset.den_factor,config.train.route_size,device)
-
-      # provide the summary of model
     if args.local_rank == 0:
         logger.info(pprint.pformat(args))
         logger.info(config)
-
         from fvcore.nn.flop_count import flop_count
         from fvcore.nn.parameter_count import parameter_count_table
         print(parameter_count_table(model))
@@ -146,6 +148,7 @@ def main():
             (1, 3, 768, 1024)
         ).cuda()
         logger.info(flop_count(model.cuda(), dump_input.cuda(),))
+        print(parameter_count_table(model))
         # import pdb
         # pdb.set_trace()
 
@@ -153,11 +156,10 @@ def main():
             work_dir = os.path.join(os.path.dirname(__file__), '../')
             backup_dir = os.path.join(train_log_dir, 'code')
             copy_cur_env(work_dir, backup_dir, ['exp'])
-
+    model = model.to(device)
     optimizer = build_optimizer_cls(config.optimizer, model)
     if distributed:
         model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
-        model = model.to(device)
         model = nn.parallel.DistributedDataParallel(
             model, device_ids=[args.local_rank], output_device=args.local_rank,
             find_unused_parameters=True)
@@ -184,46 +186,27 @@ def main():
 
     # prepare data
     train_dataset = eval('datasets.' + config.dataset.name)(
-        root=config.dataset.root,
-        list_path=config.dataset.train_set,
-        num_samples=None,
-        num_classes=config.dataset.num_classes,
-        multi_scale=config.train.multi_scale,
-        flip=config.train.flip,
-        ignore_label=None,
-        base_size=config.train.base_size,
-        crop_size=config.train.image_size,
-        min_unit=config.train.route_size,
-        scale_factor=config.train.scale_factor)
-
+        root=config.dataset.root, list_path=config.dataset.train_set, num_samples=None,
+        num_classes=config.dataset.num_classes, multi_scale=config.train.multi_scale,
+        flip=config.train.flip, ignore_label=config.train.ignore_label,
+        base_size=config.train.base_size, crop_size=config.train.image_size,
+        min_unit=config.train.route_size, scale_factor=config.train.scale_factor)
     if distributed:
         train_sampler = DistributedSampler(train_dataset)
     else:
         train_sampler = None
 
     trainloader = torch.utils.data.DataLoader(
-        train_dataset,
-        batch_size=config.train.batch_size_per_gpu,
-        shuffle=config.train.shuffle and train_sampler is None,
-        num_workers=config.workers,
-        pin_memory=True,
-        drop_last=True,
-        persistent_workers=True,
-        collate_fn=default_collate,
-        sampler=train_sampler)
+        train_dataset, batch_size=config.train.batch_size_per_gpu, shuffle=config.train.shuffle,
+        num_workers=config.workers, pin_memory=True, drop_last=True,
+        persistent_workers=True, collate_fn=default_collate)
 
 
     test_dataset = eval('datasets.' + config.dataset.name)(
-        root=config.dataset.root,
-        list_path=config.dataset.test_set,
-        num_samples=None,
-        num_classes=config.dataset.num_classes,
-        multi_scale=False,
-        flip=False,
-        base_size=config.test.base_size,
-        crop_size=(None, None),
-        min_unit=config.train.route_size,
-        downsample_rate=1)
+        root=config.dataset.root, list_path=config.dataset.test_set, num_samples=None,
+        num_classes=config.dataset.num_classes, multi_scale=False, flip=False,
+        base_size=config.test.base_size, crop_size=(None, None),
+        min_unit=config.train.route_size, downsample_rate=1)
 
     if distributed:
         test_sampler = DistributedSampler(test_dataset)
@@ -231,13 +214,9 @@ def main():
         test_sampler = None
 
     testloader = torch.utils.data.DataLoader(
-        test_dataset,
-        batch_size=config.test.batch_size_per_gpu,
-        shuffle=False,
-        num_workers=config.workers,
-        pin_memory=True,
-        collate_fn=default_collate,
-        sampler=test_sampler)
+        test_dataset, batch_size=config.test.batch_size_per_gpu, shuffle=False,
+        num_workers=config.workers, pin_memory=True, collate_fn=default_collate)
+
 
 
         # torch.optim.SGD([{'params':
@@ -271,8 +250,20 @@ def main():
         maximum_sample=1000, device=device)
     scheduler = build_scheduler(config.lr_config, optimizer, epoch_iters, config.train.end_epoch)
     for epoch in range(last_epoch, end_epoch):
+        log_gpu_memory("Start of Epoch " + str(epoch), logger)
         if distributed:
             train_sampler.set_epoch(epoch)
+        for batch_idx, (data, target) in enumerate(trainloader):
+            data, target = data.to(device), target.to(device)
+            optimizer.zero_grad()
+            log_gpu_memory(f"Before Forward Pass - Epoch {epoch}, Batch {batch_idx}", logger)
+            output = model(data)
+            loss = criterion(output, target)
+            log_gpu_memory(f"After Forward Pass - Epoch {epoch}, Batch {batch_idx}", logger)
+            loss.backward()
+            log_gpu_memory(f"After Backward Pass - Epoch {epoch}, Batch {batch_idx}", logger)
+            optimizer.step()
+            log_gpu_memory(f"After Optimizer Step - Epoch {epoch}, Batch {batch_idx}", logger)
         if epoch >= config.train.end_epoch:
             train(config, epoch - config.train.end_epoch,
                   config.train.extra_epoch, epoch_iters,
@@ -287,7 +278,8 @@ def main():
                   train_dataset.std, task_KPI,train_dataset)
         if epoch >=5:
             train_dataset.AI_resize =False
-        if (epoch+1) % bisect_right(config.train.val_span, -epoch) == 0:
+        if (epoch + 1) % config.train.val_span[0] == 0:
+            
             valid_loss, mae, mse, nae = validate(config,
                                                  testloader, model, writer_dict, device,
                                                  config.test.patch_batch_size,
