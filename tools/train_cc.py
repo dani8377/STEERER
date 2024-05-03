@@ -35,17 +35,6 @@ from lib.solver.build import build_optimizer_cls
 from lib.solver.lr_scheduler_cls import build_scheduler
 from fvcore.nn.flop_count import flop_count
 
-
-def log_gpu_memory(message):
-    allocated = torch.cuda.memory_allocated() / (1024 ** 3)  # Convert bytes to GB
-    cached = torch.cuda.memory_reserved() / (1024 ** 3)
-    print(f"{message}: Allocated memory = {allocated:.2f} GB, Cached memory = {cached:.2f} GB")
-
-# Place this function call within your data loading and training loops:
-log_gpu_memory("Before data load to CUDA")
-# data loading and model forward operations
-log_gpu_memory("After data load to CUDA")
-
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.integer):
