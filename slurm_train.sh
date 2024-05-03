@@ -14,7 +14,8 @@ PY_ARGS=${@:5}
 
 PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
 
-source ~/zhome/bb/4/167805/miniconda3/bin/activate STEERER
+source /zhome/bb/4/167805/miniconda3/bin/activate STEERER
+
 
 srun -p ${PARTITION} \
     --job-name=${JOB_NAME} \
