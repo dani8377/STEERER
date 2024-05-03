@@ -93,6 +93,10 @@ def parse_args():
 
 def main():
     args = parse_args()
+    if args.launcher == 'slurm':
+        init_slurm()  # Slurm-specific initialization
+    elif args.launcher == 'lsf':
+        init_lsf()    # LSF-specific initialization
 
     config = Config.fromfile(args.cfg)
 
@@ -347,7 +351,15 @@ def main():
                     end = timeit.default_timer()
                     logger.info('Hours: %d' % np.int32((end - start) / 3600))
                     logger.info('Done')
-
+def init_lsf():
+    import os
+    # Setup for LSF as described earlier
+    # This is just a placeholder, adapt it as necessary for your environment
+    os.environ['MASTER_ADDR'] = os.getenv('LSB_MCPU_HOSTS').split()[0]
+    os.environ['MASTER_PORT'] = '29500'  # Choose an appropriate default
+    os.environ['WORLD_SIZE'] = os.getenv('LSB_DJOB_NUMPROC')
+    os.environ['RANK'] = os.getenv('LSB_JOBINDEX')
+    os.environ['LOCAL_RANK'] = os.getenv('LSB_LOCAL_RANK', '0')
 
 if __name__ == '__main__':
     main()
