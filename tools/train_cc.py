@@ -259,9 +259,12 @@ def main():
                 print("Length of batch data list/tuple:", len(batch_data))
                 for i, item in enumerate(batch_data):
                     print(f"Element {i}: Type={type(item)}, Device={item.device if isinstance(item, torch.Tensor) else 'N/A'}")
-                    break
-            data = batch_data[0]
-            target = batch_data[1]
+                data = batch_data[0]
+                target = batch_data[1]
+            else:
+                logger.error("Batch data is not a list or tuple, check DataLoader")
+                continue
+
             data, target = data.to(device), target.to(device)
             optimizer.zero_grad()
             log_gpu_memory(f"Before Forward Pass - Epoch {epoch}, Batch {batch_idx}", logger)
