@@ -1,7 +1,7 @@
 # _base_ =[
 #     '../_base_/datasets/imagenet_bs64_swin_224.py'
 # ]
-gpus = (0, 1,)
+gpus = (0, 1, 2, 3)
 log_dir = 'exp'
 workers = 12
 print_freq = 30
