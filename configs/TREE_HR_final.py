@@ -1,7 +1,7 @@
 # _base_ =[
 #     '../_base_/datasets/imagenet_bs64_swin_224.py'
 # ]
-gpus = (0, 1,)
+gpus = (0, 1, 2, 3)
 log_dir = 'exp'
 workers = 6
 print_freq = 30
@@ -75,7 +75,7 @@ train = dict(
     image_size=(256, 256),  # height width
     route_size=(256, 256),  # height, width
     base_size=2048,
-    batch_size_per_gpu=24,
+    batch_size_per_gpu=1,
     shuffle=True,
     begin_epoch=0,
     end_epoch=1000,
