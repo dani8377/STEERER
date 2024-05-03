@@ -1,4 +1,4 @@
-gpus = (0, 1,)
+gpus = (0, 1, 2, 3)
 log_dir = 'exp'
 workers = 6
 print_freq = 30
