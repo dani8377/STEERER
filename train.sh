@@ -1,28 +1,16 @@
-#!/usr/bin/env sh
-# Example usage: sh train.sh configs/SHHB_final.py 0,1,2,3
+#!/bin/bash
 
-CONFIG=$1
-GPUS_ID=${2:-0}  # Default to using GPU 0
-PORT=${3:-29000} # Default port
-NNODES=${NNODES:-1}
-NODE_RANK=${NODE_RANK:-0}
-MASTER_ADDR=${MASTER_ADDR:-"127.0.0.1"}
+#BSUB -J SHHB_Crowd_Train         # Set the job name
+#BSUB -q 'gpuv100'               # Specify the queue/partition
+#BSUB -gpu "num=4:mode=exclusive_process"  # Request 4 GPUs, exclusive access
+#BSUB -n 16                     # Total number of tasks (GPUs in this case)
+#BSUB -R "span[ptile=4]"       # Number of tasks per node
+#BSUB -M 20GB                  # Memory limit per task
+#BSUB -W 24:00                # Wall clock limit (188 hours)
+#BSUB -o %J.out                # Standard output
+#BSUB -e %J.err                # Standard error
 
-# Splitting GPU IDs on commas, counting them
-IFS=',' read -r -a gpu_array <<< "$GPUS_ID"
-GPU_NUM=${#gpu_array[@]}
-
-# Activate the Python environment
 source ~/miniconda3/bin/activate STEERER
 
-# Set CUDA_VISIBLE_DEVICES to the specified GPUs
-echo "Setting CUDA_VISIBLE_DEVICES to $GPUS_ID"
-export CUDA_VISIBLE_DEVICES=$GPUS_ID
-
-# Launch the training using the PyTorch distributed framework
-bsub -M 20GB -R "rusage[mem=20GB]" python -m torch.distributed.launch \
-    --nproc_per_node=$GPU_NUM \
-    --node_rank=$NODE_RANK \
-    --master_addr=$MASTER_ADDR \
-    --master_port=$PORT \
-    tools/train_cc.py --cfg=$CONFIG --launcher="pytorch"
+# Run the Python script
+python -u tools/train_cc.py --cfg configs/SHHB_final.py --launcher="lsf" ${@:5}
