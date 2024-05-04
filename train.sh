@@ -1,5 +1,5 @@
 #!/bin/bash
-#BSUB -J my_training_job
+#BSUB -J virkahelst
 #BSUB -o output.%J
 #BSUB -e error.%J
 #BSUB -n 4
