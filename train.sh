@@ -1,25 +1,28 @@
-#!/bin/bash
-#BSUB -J virkahelst
-#BSUB -o output.%J
-#BSUB -e error.%J
-#BSUB -n 4
-#BSUB -R "rusage[mem=20GB]"
-#BSUB -R "span[ptile=4]"
-#BSUB -gpu "num=4:mode=exclusive_process"
+#!/usr/bin/env sh
+# Example usage: sh train.sh configs/SHHB_final.py 0,1,2,3
 
-# Load necessary modules and activate environment if needed
-# module load cuda/your_cuda_version
-# source activate your_environment
+CONFIG=$1
+GPUS_ID=${2:-0}  # Default to using GPU 0
+PORT=${3:-29000} # Default port
+NNODES=${NNODES:-1}
+NODE_RANK=${NODE_RANK:-0}
+MASTER_ADDR=${MASTER_ADDR:-"127.0.0.1"}
+
+# Splitting GPU IDs on commas, counting them
+IFS=',' read -r -a gpu_array <<< "$GPUS_ID"
+GPU_NUM=${#gpu_array[@]}
+
+# Activate the Python environment
+source ~/miniconda3/bin/activate STEERER
 
 # Set CUDA_VISIBLE_DEVICES to the specified GPUs
-GPUS_ID="0,1,2,3"
 echo "Setting CUDA_VISIBLE_DEVICES to $GPUS_ID"
 export CUDA_VISIBLE_DEVICES=$GPUS_ID
 
-# Launch the training using bsub
-bsub -M 20GB python -m torch.distributed.launch \
-    --nproc_per_node=4 \
-    --node_rank=0 \
-    --master_addr="127.0.0.1" \
-    --master_port=29000 \
-    tools/train_cc.py --cfg=configs/SHHB_final.py --launcher="pytorch"
+# Launch the training using the PyTorch distributed framework
+bsub -R "rusage[mem=20GB]" python -m torch.distributed.launch \
+    --nproc_per_node=$GPU_NUM \
+    --node_rank=$NODE_RANK \
+    --master_addr=$MASTER_ADDR \
+    --master_port=$PORT \
+    tools/train_cc.py --cfg=$CONFIG --launcher="pytorch"
