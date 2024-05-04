@@ -20,7 +20,7 @@ echo "Setting CUDA_VISIBLE_DEVICES to $GPUS_ID"
 export CUDA_VISIBLE_DEVICES=$GPUS_ID
 
 # Launch the training using the PyTorch distributed framework
-python -m torch.distributed.launch \
+bsub -M 20GB python -m torch.distributed.launch \
     --nproc_per_node=$GPU_NUM \
     --node_rank=$NODE_RANK \
     --master_addr=$MASTER_ADDR \
