@@ -26,4 +26,3 @@ bsub -M 20GB -R "rusage[mem=20GB]" python -m torch.distributed.launch \
     --master_addr=$MASTER_ADDR \
     --master_port=$PORT \
     tools/train_cc.py --cfg=$CONFIG --launcher="pytorch"
-
