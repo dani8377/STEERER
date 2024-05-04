@@ -1,34 +1,35 @@
-#!/bin/bash
+# !/usr/bin/env sh
+# ${GPUS:-4}
+# set -x
 
-# Set the job name
-#BSUB -J SHHB_Crowd_Train
 
-# Specify the queue/partition
-#BSUB -q gpuv100
+CONFIG=$1
+GPUS_ID=${2:-0}    #the default gpu_id is 0 
+PORT=${3:-29000}   #the default gpu_id is 1
+NNODES=${NNODES:-1}
+NODE_RANK=${NODE_RANK:-0}
 
-# Request 4 GPUs, exclusive access
-#BSUB -gpu "num=4:mode=exclusive_process"
+MASTER_ADDR=${MASTER_ADDR:-"127.0.0.1"}
 
-# Total number of tasks (GPUs in this case)
-#BSUB -n 16
+GPU_NUM=0
 
-# Number of tasks per node
-#BSUB -R "span[ptile=4]"
+for ((i=0; i<${#GPUS_ID}; i++)); do
+    if [[ ${GPUS_ID:i:1} =~ [0-9] ]]; then
+        ((GPU_NUM++))
+    fi
+done
 
-# Memory limit per task
-#BSUB -M 20GB
+source ~/anaconda3/bin/activate STEERER
 
-# Wall clock limit (24 hours)
-#BSUB -W 24:00
+echo "export CUDA_VISIBLE_DEVICES=$GPUS_ID"
+export CUDA_VISIBLE_DEVICES=${GPUS_ID:-"0"}
 
-# Standard output
-#BSUB -o %J.out
 
-# Standard error
-#BSUB -e %J.err
+# torchrun --nproc_per_node=${GPU_NUM} --master_port ${PORT} tools/train_cc.py --cfg ${CONFIG} 
 
-# Activate the Conda environment
-source ~/miniconda3/bin/activate STEERER
-
-# Run the Python script
-python -u tools/train_cc.py --cfg configs/SHHB_final.py --launcher="lsf" ${@:5}
+python -m torch.distributed.launch \
+    --node_rank=$NODE_RANK \
+    --master_addr=$MASTER_ADDR \
+    --nproc_per_node=$GPU_NUM \
+    --master_port=$PORT \
+    tools/train_cc.py --cfg=$CONFIG --launcher="pytorch"
