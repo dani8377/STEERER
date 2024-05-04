@@ -2,6 +2,17 @@
 # ${GPUS:-4}
 # set -x
 
+#BSUB -J Blurred_QNRF         # Set the job name
+#BSUB -q hpc               # Specify the queue/partition
+#BSUB -gpu "num=4:mode=exclusive_process"  # Request 4 GPUs, exclusive access
+#BSUB -n 16                     # Total number of tasks (GPUs in this case)
+#BSUB -R "span[ptile=4]"       # Number of tasks per node
+#BSUB -M 20GB                  # Memory limit per task
+#BSUB -W 300:00                # Wall clock limit (188 hours)
+#BSUB -o %J.out                # Standard output
+#BSUB -e %J.err                # Standard error
+#BSUB -u s205336@dtu.dk
+
 CONFIG=$1
 GPUS_ID=${2:-0}    #the default gpu_id is 0 
 PORT=${3:-29000}   #the default port is 29000
