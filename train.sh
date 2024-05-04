@@ -2,19 +2,7 @@
 # ${GPUS:-4}
 # set -x
 
-#BSUB -J Blurred_QNRF
-#BSUB -q hpc
-#BSUB -gpu "num=4:mode=exclusive_process"
-#BSUB -n 16
-#BSUB -R "span[ptile=4]"
-#BSUB -M 10GB
-#BSUB -W 300:00
-#BSUB -o %J.out
-#BSUB -e %J.err
-#BSUB -u s205336@dtu.dk
-
-#CONFIG=$1
-CONFIG="configs/Blurred_QNRF_final.py"
+CONFIG=$1
 GPUS_ID=${2:-0}    #the default gpu_id is 0 
 PORT=${3:-29000}   #the default port is 29000
 NNODES=${NNODES:-1}
