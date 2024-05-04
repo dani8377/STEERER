@@ -104,4 +104,3 @@ CUDNN = dict(
     DETERMINISTIC= False,
     ENABLED= True)
 
-
