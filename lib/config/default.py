@@ -17,7 +17,7 @@ from yacs.config import CfgNode as CN
 _C = CN()
 
 _C.LOG_DIR = ''
-_C.GPUS = (0,)
+_C.GPUS = (0, 1, 2, 3)
 _C.WORKERS = 4
 _C.PRINT_FREQ = 20
 _C.AUTO_RESUME = False
