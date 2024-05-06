@@ -1,4 +1,4 @@
-#!/bin/sh
+“#!/bin/sh
 #BSUB -J Blurred_QNRF         # Set the job name
 #BSUB -q gpuv100               # Specify the queue/partition
 #BSUB -gpu "num=2:mode=exclusive_process"  # Request 4 GPUs, exclusive access
@@ -12,5 +12,5 @@
 source ~/miniconda3/bin/activate STEERER
 
 # Run the program
-sh root/STEERER/train.sh configs/SHHB_final.py 0,1,2,3
+sh root/STEERER/train.sh configs/Blurred_SHHB_final.py 0,1,2,3
 "
