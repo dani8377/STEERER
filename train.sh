@@ -12,5 +12,5 @@
 source ~/miniconda3/bin/activate STEERER
 
 # Run the program
-sh root/STEERER/train.sh configs/Blurred_QNRF_final.py 0,1
+sh root/STEERER/train.sh configs/SHHB_final.py 0,1,2,3
 "
