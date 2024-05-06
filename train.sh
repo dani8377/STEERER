@@ -12,4 +12,4 @@
 source ~/miniconda3/bin/activate STEERER
 
 # Run the program
-sh root/STEERER/train.sh configs/Blurred_SHHB_final.py 0,1"
+sh train.sh configs/Blurred_SHHB_final.py 0,1,2,3"
