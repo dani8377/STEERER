@@ -32,4 +32,4 @@ python3 -m torch.distributed.launch \
     --master_addr=$MASTER_ADDR \
     --nproc_per_node=$GPU_NUM \
     --master_port=$PORT \
-    tools/train_cc.py --cfg=$CONFIG --launcher="pytorch"
+    root/STEERER/tools/train_cc.py --cfg=$CONFIG --launcher="pytorch"
