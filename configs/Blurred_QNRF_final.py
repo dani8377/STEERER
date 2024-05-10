@@ -77,7 +77,7 @@ train = dict(
     extra_epoch=0,
     extra_lr = 0,
     #  RESUME: true
-    resume_path=None,#"
+    resume_path='exp/QNRF/MocHRBackbone_hrnet48/Blurred_QNRF_final_2024-05-09-00-23',#"
     flip=True,
     multi_scale=True,
     scale_factor=(0.5, 1/0.5),
