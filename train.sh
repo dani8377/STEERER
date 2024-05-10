@@ -32,4 +32,4 @@ python -m torch.distributed.launch \
     --master_addr=$MASTER_ADDR \
     --nproc_per_node=$GPU_NUM \
     --master_port=$PORT \
-    tools/train_cc.py --cfg=$CONFIG --launcher="pytorch" --checkpoint="exp/QNRF/MocHRBackbone_hrnet48/Blurred_QNRF_final_2024-05-09-00-23/checkpoint.pth.tar"
+    tools/train_cc.py --cfg=$CONFIG --launcher="pytorch"
