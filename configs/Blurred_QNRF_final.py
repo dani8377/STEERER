@@ -77,7 +77,7 @@ train = dict(
     extra_epoch=0,
     extra_lr = 0,
     #  RESUME: true
-    resume_path='exp/QNRF/MocHRBackbone_hrnet48/Blurred_QNRF_final_2024-05-09-00-23',#"
+    resume_path='exp/QNRF/MocHRBackbone_hrnet48/Blurred_QNRF_final_2024-05-09-00-23/',#"
     flip=True,
     multi_scale=True,
     scale_factor=(0.5, 1/0.5),
@@ -96,7 +96,7 @@ test = dict(
     patch_batch_size=16,
     flip_test=False,
     multi_scale=False,
-    model_file = './exp/QNRF/MocHRBackbone_hrnet48/QNRF_final_2023-10-28-13-44/QNRF_mae_78.4_mse_135.6.pth'
+    model_file = 'exp/QNRF/MocHRBackbone_hrnet48/Blurred_QNRF_final_2024-05-09-00-23/final_state.pth'
     # model_file = './exp/QNRF/MocHRBackbone_hrnet48/QNRF_HR_2022-10-21-01-51/Ep_359_mae_75.40686944287694_mse_134.
 )
 
