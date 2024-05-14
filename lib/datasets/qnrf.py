@@ -27,7 +27,8 @@ class QNRF(NWPU):
                  downsample_rate=1,
                  scale_factor=(0.5, 1/0.5),
                  mean=[0.485, 0.456, 0.406],
-                 std=[0.229, 0.224, 0.225]):
+                 std=[0.229, 0.224, 0.225],
+                 downsample = 1):
 
         super(QNRF, self).__init__(
             root,
@@ -44,7 +45,8 @@ class QNRF(NWPU):
             downsample_rate,
             scale_factor,
             mean,
-            std)
+            std,
+            downsample)
     # def gen_sample(self, image, points,
     #                multi_scale=True, is_flip=True, center_crop_test=False):
     #

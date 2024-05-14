@@ -22,7 +22,8 @@ class BaseDataset(data.Dataset):
                  downsample_rate=1,
                  scale_factor=(0.5, 1/0.5),
                  mean=[0.485, 0.456, 0.406], 
-                 std=[0.229, 0.224, 0.225]):
+                 std=[0.229, 0.224, 0.225],
+                 downsample = 1):
         if   isinstance(base_size,tuple):
             self.min_size = base_size[0]
             self.base_size = base_size[1]

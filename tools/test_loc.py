@@ -130,6 +130,7 @@ def main():
         num_samples=None,
         multi_scale=False,
         flip=False,
+        downsample=config.train.downsampled,
         base_size=config.test.loc_base_size,
         downsample_rate=1)
 

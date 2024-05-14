@@ -33,7 +33,8 @@ class NWPU(BaseDataset):
                  downsample_rate=1,
                  scale_factor=(0.5,1/0.5),
                  mean=[0.485, 0.456, 0.406],
-                 std=[0.229, 0.224, 0.225]):
+                 std=[0.229, 0.224, 0.225],
+                 downsample = 1):
 
         super(NWPU, self).__init__(ignore_label, base_size,
                                    crop_size, downsample_rate, scale_factor, mean, std)
@@ -46,6 +47,7 @@ class NWPU(BaseDataset):
         self.multi_scale = multi_scale
         self.flip = flip
         self.scale_factor =scale_factor
+        self.downsample = downsample
         a = np.arange(scale_factor[0],1.,0.05)
         # b = np.linspace(1, scale_factor[1],a.shape[0])
 
@@ -113,6 +115,8 @@ class NWPU(BaseDataset):
             info = json.load(f)
         points =  np.array(info['points']).astype('float32').reshape(-1,2)
 
+        image, points = self.downsample_image_points(image, points, self.downsample)
+
         ratio = 1.0
         if self.base_size is not  None:            
             image,points,ratio = self.image_points_resize(image, self.base_size,points)
@@ -144,6 +148,18 @@ class NWPU(BaseDataset):
                                        )
 
         return image.copy(), label, np.array(size), [name, idx, resize_factor]
+    
+    def downsample_image_points(self, image, points, downsample_rate=1):
+        # Apply downsampling
+        downsample_rate = downsample_rate  # Assuming this is already defined in the class
+        new_width = int(image.shape[1] * downsample_rate)
+        new_height = int(image.shape[0] * downsample_rate)
+        image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_LINEAR)
+
+        # Transform points to match the downscaled image
+        points = points * downsample_rate
+
+        return image, points
 
     def check_img(self, image,divisor ):
         h, w = image.shape[:2]

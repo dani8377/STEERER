@@ -128,6 +128,7 @@ def main():
         list_path=config.dataset.test_set,
         num_samples=None,
         multi_scale=False,
+        downsample=config.train.downsampled,
         flip=False,
         base_size=config.test.base_size,
         downsample_rate=1)
