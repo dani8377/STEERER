@@ -189,7 +189,6 @@ def main():
         num_samples=None,
         num_classes=config.dataset.num_classes,
         multi_scale=config.train.multi_scale,
-        downsample=config.train.downsampled,
         flip=config.train.flip,
         ignore_label=None,
         downsample=config.train.downsample,
