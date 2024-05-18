@@ -26,9 +26,10 @@ done
 export CUDA_VISIBLE_DEVICES=${GPUS:-"1"}
 # torchrun --nproc_per_node=${GPU_NUM} --master_port ${PORT} tools/train_cc.py --cfg ${CONFIG} 
 
-python -m torch.distributed.launch \
+torchrun \
+    --nnodes=$NNODES \
     --node_rank=$NODE_RANK \
     --master_addr=$MASTER_ADDR \
     --nproc_per_node=$GPU_NUM \
     --master_port=$PORT \
-    tools/test_loc.py --cfg=$CONFIG --checkpoint=${CHECKPOINT} --launcher="pytorch"
+    tools/train_cc.py --cfg=$CONFIG
